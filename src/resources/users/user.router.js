@@ -5,52 +5,39 @@ const usersService = require('./user.service');
 router.route('/')
   .get(async (req, res) => {
   const users = await usersService.getAll();
-  res.json(users.map(User.toResponse));
-})
-  .post(async (req, res) => {
-    const {login, name, password} = req.body;
-   await usersService.create({login, name, password})
-      .catch((err) => {
-        res.status(400).send(err.message);
-      });
 
-    res.status(201).send();
+  return res.json(users.map(User.toResponse));
+})
+  .post(async (req, res, next) => {
+    const {login, name, password} = req.body;
+    await usersService.create({login, name, password})
+      .then(() => res.status(201).send())
+      .catch((err) => next(err));
   });
 
 router.route('/:id')
-  .get(async (req, res) => {
+  .get(async (req, res, next) => {
   const { id } = req.params;
 
-  const user = await usersService.getById(id);
+  const user = await usersService.getById(id)
+    .catch(err => next(err));
 
-  if(user) {
-    res.json(User.toResponse(user));
-  } else {
-    res.status(404);
-  }
+    return user && res.json(User.toResponse(user));
 })
-  .put(async (req, res) => {
+  .put(async (req, res, next) => {
     const {id} = req.params;
 
     await usersService.update(id, req.body)
-      .catch((err) => {
-        req.status(err.message).send();
-      });
-
-    res.status(200).send();
+      .then(() => res.status(200).send())
+      .catch((err) => next(err));
   })
-  .delete(async (req, res) => {
+  .delete(async (req, res, next) => {
     const {id} = req.params;
 
-    await usersService.update(id, req.body)
-      .catch((err) => {
-        req.status(err.message).send();
-      });
-
-    res.status(200);
+    await usersService.deleteUser(id)
+      .then(() => res.status(204).send())
+      .catch((err) => next(err));
   });
-
-
 
 
 module.exports = router;

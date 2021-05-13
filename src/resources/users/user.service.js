@@ -1,4 +1,5 @@
 const usersRepo = require('./user.memory.repository');
+const {BadRequest} = require('../../common/erros');
 
 const getAll = () => usersRepo.getAll();
 
@@ -8,7 +9,7 @@ const create = (user) => usersRepo.createUser(user);
 
 const update = (id, user) => {
   if (!user) {
-    throw Error('400')
+    throw new BadRequest();
   }
 
   return usersRepo.update(id, user)

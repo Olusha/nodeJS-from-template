@@ -1,8 +1,17 @@
 const User = require('./user.model');
+const {BadRequest, NotFound} = require('../../common/erros');
 
 const USERS = [];
 
-const findUser = (id) => USERS.find((u) => u.id === id);
+const findUser = (id) => {
+  const user = USERS.find((u) => u.id === id);
+
+  if(user) {
+    return user;
+  }
+
+  throw new NotFound();
+};
 
 const getAll = async () => USERS.map(u => User.toResponse(u));
 
@@ -10,7 +19,7 @@ const getById = async (id) => findUser(id);
 
 const createUser = async ({name, login, password}) => {
   if(USERS.filter(u => u.login === login).length) {
-    throw new Error('User with this login already exists')
+    throw new BadRequest('User with this login already exists');
   }
 
   const user = new User({name, login, password});
@@ -21,10 +30,6 @@ const createUser = async ({name, login, password}) => {
 const update = async (id, user) => {
   const userToUpdate = findUser(id);
 
-  if(!userToUpdate) {
-    throw new Error('404')
-  }
-
   const updated = {
     ...userToUpdate,
     ...user,
@@ -34,13 +39,12 @@ const update = async (id, user) => {
 };
 
 
-const deleteUser = (id) => {
+const deleteUser = async (id) => {
+  findUser(id);
 
   const index = USERS.indexOf(u => u.id === id);
 
   USERS.splice(index,1);
 };
-
-
 
 module.exports = { getAll, getById, createUser, update, deleteUser};

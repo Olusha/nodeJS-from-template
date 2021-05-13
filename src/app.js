@@ -21,4 +21,14 @@ app.use('/', (req, res, next) => {
 
 app.use('/users', userRouter);
 
+
+// Error middleware
+app.use((error, req, res) => {
+  const defaultErrorCode = 500;
+
+  return res
+    .status(error.statusCode || defaultErrorCode)
+    .json({ error: error.toString() });
+});
+
 module.exports = app;
