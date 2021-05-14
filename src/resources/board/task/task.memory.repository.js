@@ -14,7 +14,7 @@ const TASKS = [];
 
 const findTask = (id) => findEntity(TASKS, id);
 
-const getAll = async ({boardId = null, userId = null} = {}) => {
+const getAll = async ({boardId, userId} = {}) => {
   if(!boardId && !userId) {
     return TASKS;
   }
@@ -46,6 +46,8 @@ const create = async ({order, userId, boardId, columnId, title, description}) =>
   const task = new Task({order, description, title, boardId, columnId, userId});
 
   TASKS.push(task);
+
+  return task;
 };
 
 const update = async (id, task) => {

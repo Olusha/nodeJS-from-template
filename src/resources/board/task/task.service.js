@@ -1,17 +1,17 @@
 const taskRepo = require('./task.memory.repository');
 const {BadRequest} = require('../../../common/erros');
 
-const getAll = ({boardId = null, userId = null} = {}) => taskRepo.getAll({boardId, userId});
+const getAll = (params = {}) => taskRepo.getAll(params);
 
 const getById = (id) => taskRepo.getById(id);
 
-const create = (task) => {
-  if(!(task && task.title && task.boardId && task.userId && (task.order) && task.columnId)) {
-    throw BadRequest('Please, fill in required fields');
-  }
+const create = (boardId, task) => 
+  // if(!(task && task.title && boardId && task.userId && task.order && task.columnId)) {
+  //   throw new BadRequest('Please, fill in required fields');
+  // }
 
-  return taskRepo.create(task);
-};
+   taskRepo.create({...task, boardId})
+;
 
 const update = (id, task) => {
   if (!task) {

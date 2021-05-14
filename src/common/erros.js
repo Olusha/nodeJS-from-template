@@ -1,19 +1,4 @@
-// eslint-disable-next-line max-classes-per-file
-class BadRequest extends Error {
-  constructor(message) {
-    super();
-    this.message = message;
-    this.statusCode = 400;
-  }
-}
-
-class NotFound extends Error {
-  constructor(message) {
-    super();
-    this.message = message;
-    this.statusCode = 404;
-
-  }
-}
+const BadRequest= require('./errors/bad-request');
+const NotFound= require('./errors/not-found');
 
 module.exports = {BadRequest, NotFound};

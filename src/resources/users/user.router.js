@@ -6,12 +6,12 @@ router.route('/')
   .get(async (req, res) => {
   const users = await usersService.getAll();
 
-  return res.json(users.map(User.toResponse));
+  return res.json(users.map(u => User.toResponse(u)));
 })
   .post(async (req, res, next) => {
     try {
-      await usersService.create(req.body);
-      res.status(201).send();
+      const user = await usersService.create(req.body);
+      res.status(201).json(User.toResponse(user));
     } catch (e) {
       next(e)
     }
@@ -32,10 +32,10 @@ router.route('/:id')
     const {id} = req.params;
 
     try {
-      await usersService.update(id, req.body);
-      res.status(200).send()
+      const updated = await usersService.update(id, req.body);
+      return res.status(200).json(User.toResponse(updated))
     } catch (e) {
-      next(e)
+      return next(e)
     }
   })
   .delete(async (req, res, next) => {

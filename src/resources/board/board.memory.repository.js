@@ -16,6 +16,8 @@ const create = async ({title, columns}) => {
   const board = new Board({title, columns: cols});
 
   BOARDS.push(board);
+
+  return board;
 };
 
 const update = async (id, body) => {
@@ -28,6 +30,8 @@ const update = async (id, body) => {
 
 
   Object.assign(board, updated);
+
+  return board;
 };
 
 

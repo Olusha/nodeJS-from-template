@@ -12,11 +12,11 @@ router.route('/')
 })
   .post(async (req, res, next) => {
     try {
-      await boardService.create(req.body);
-      res.status(201).send()
+      const board =await boardService.create(req.body);
+      return res.status(201).json(board)
     }
     catch (e) {
-       next(e)
+      return next(e)
     }
   });
 
@@ -36,10 +36,10 @@ router.route('/:id')
     const {id} = req.params;
 
     try {
-      await boardService.update(id, req.body);
-      res.status(200).send();
+      const board = await boardService.update(id, req.body);
+      return res.status(200).json(board);
     } catch (e) {
-       next(e)
+       return next(e)
     }
   })
   .delete(async (req, res, next) => {
@@ -55,8 +55,7 @@ router.route(`${taskBaseApi}`)
   .get(async (req, res, next) => {
 
     try {
-      const tasks = await taskService.getAll();
-
+      const tasks = await taskService.getAll({boardId: req.params.id});
       return res.json(tasks);
     } catch (e) {
       return next(e)
@@ -64,11 +63,11 @@ router.route(`${taskBaseApi}`)
   })
   .post(async (req, res, next) => {
     try {
-      await taskService.create(req.body);
-      res.status(201).send()
+      const task = await taskService.create(req.params.id, req.body);
+      return res.status(201).json(task)
     }
     catch (e) {
-      next(e)
+      return next(e)
     }
   });
 
@@ -88,18 +87,21 @@ router.route(`${taskBaseApi}/:taskId`)
     const {taskId} = req.params;
 
     try {
-      await taskService.update(taskId, req.body);
-      res.status(200).send();
+      const task = await taskService.update(taskId, req.body);
+      return res.status(200).json(task);
     } catch (e) {
-      next(e)
+      return next(e)
     }
   })
   .delete(async (req, res, next) => {
     const {taskId} = req.params;
 
-    await taskService.deleteTask(taskId)
-      .then(() => res.status(204).send())
-      .catch((err) => next(err));
+    try {
+      await taskService.deleteTask(taskId);
+      res.status(204).send();
+    } catch (e) {
+      next(e)
+    }
   });
 
 

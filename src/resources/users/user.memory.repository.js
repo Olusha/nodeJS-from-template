@@ -1,6 +1,5 @@
 const User = require('./user.model');
 const {BadRequest, NotFound} = require('../../common/erros');
-const taskRepo = require('../board/task/task.memory.repository');
 
 const USERS = [];
 
@@ -26,6 +25,8 @@ const createUser = async ({name, login, password}) => {
   const user = new User({name, login, password});
 
   USERS.push(user);
+
+  return user;
 };
 
 const update = async (id, user) => {
@@ -37,6 +38,8 @@ const update = async (id, user) => {
   };
 
   Object.assign(userToUpdate, updated);
+
+  return  userToUpdate;
 };
 
 
@@ -44,11 +47,6 @@ const deleteUser = async (id) => {
   findUser(id);
   const index = USERS.indexOf(u => u.id === id);
   USERS.splice(index,1);
-
-  const tasks = await taskRepo.getAll({userId: id});
-  tasks.forEach(t => {
-    Object.assign(t, {...t, userId: null});
-  });
 };
 
 module.exports = { getAll, getById, createUser, update, deleteUser};

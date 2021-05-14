@@ -17,12 +17,13 @@ const update = (id, board) => {
 };
 
 const  deleteBoard = async (id) => {
-  await boardRepo.deleteBoard(id);
-
   const tasks = await taskRepo.getAll({boardId: id});
-  await tasks.forEach(t => {
-    taskRepo.deleteTask(t.id)
-  });
+
+  await Promise.all(tasks.map(async (t) => {
+    await taskRepo.deleteTask(t.id);
+  }));
+
+  return boardRepo.deleteBoard(id);
 };
 
 module.exports = { getAll, getById , create, update, deleteBoard};
